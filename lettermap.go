@@ -23,10 +23,17 @@ func (wm wordMap) getWordForProcessing(out chan<- string) {
 }
 
 func (wm wordMap) processWord(w string, out chan<- string, wgrp *sync.WaitGroup) {
+	var arr [26]bool
 	var lh letterHash
 	lh.load(w)
+	a := int('a')
 	for i,siz:=0,len(w); i<siz; i++ {
+		loc := int(w[i]) - a
+		if arr[loc] {
+			continue
+		} 
 		lh.lookupWords(wm[w[i]], out)
+		arr[loc] = true
 	}
 	wgrp.Done()
 }
